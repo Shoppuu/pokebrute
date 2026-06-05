@@ -1,17 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { STARTER_POKEMON } from "@/data/pokemon";
+import { Pokemon } from "@/types/pokemon";
+import { generatePokemon } from "@/services/pokemon-generator";
 
 export default function Home() {
-  const [pokemon, setPokemon] = useState<string | null>(null);
+  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
 
   function getStarterPokemon() {
-    const randomIndex = Math.floor(
-      Math.random() * STARTER_POKEMON.length
-    );
-
-    setPokemon(STARTER_POKEMON[randomIndex]);
+    setPokemon(generatePokemon());
   }
 
   return (
@@ -30,9 +27,22 @@ export default function Home() {
       </button>
 
       {pokemon && (
-        <div className="rounded border p-6 text-center">
-          <h2 className="text-2xl font-bold">{pokemon}</h2>
-          <p>Niveau 1</p>
+        <div className="min-w-[250px] rounded border p-6 text-center">
+          <h2 className="text-2xl font-bold">
+            {pokemon.species}
+          </h2>
+
+          <p className="mt-2">
+            Qualité : {pokemon.rarity}
+          </p>
+
+          <p>Niveau : {pokemon.level}</p>
+
+          <div className="mt-4">
+            <p>ATK : {pokemon.attack}</p>
+            <p>DEF : {pokemon.defense}</p>
+            <p>SPD : {pokemon.speed}</p>
+          </div>
         </div>
       )}
     </main>
