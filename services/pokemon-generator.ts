@@ -1,7 +1,7 @@
-import { Pokemon } from "@/types/pokemon";
-import { STARTER_POKEMON } from "@/data/pokemon";
+import { POKEDEX } from "@/data/pokedex";
+import { Pokemon, Quality } from "@/types/pokemon";
 
-function getRarity(): Pokemon["rarity"] {
+function getRandomQuality(): Quality {
   const roll = Math.random();
 
   if (roll < 0.6) return "Commun";
@@ -13,22 +13,17 @@ function getRarity(): Pokemon["rarity"] {
 
 export function generatePokemon(): Pokemon {
   const species =
-    STARTER_POKEMON[
-      Math.floor(Math.random() * STARTER_POKEMON.length)
-    ];
+    POKEDEX[Math.floor(Math.random() * POKEDEX.length)];
 
   return {
     id: crypto.randomUUID(),
 
-    species,
+    species: species.species,
+    type: species.type,
+
+    quality: getRandomQuality(),
 
     level: 1,
     xp: 0,
-
-    attack: Math.floor(Math.random() * 6) + 10,
-    defense: Math.floor(Math.random() * 6) + 10,
-    speed: Math.floor(Math.random() * 6) + 10,
-
-    rarity: getRarity(),
   };
 }

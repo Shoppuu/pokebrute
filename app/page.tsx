@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { generatePokemon } from "@/services/pokemon-generator";
+import { getPokemonStats } from "@/services/pokemon-stats";
 
 export default function Home() {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
@@ -11,6 +12,10 @@ export default function Home() {
     setPokemon(generatePokemon());
   }
 
+  const stats = pokemon
+  ? getPokemonStats(pokemon)
+  : null;
+  
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6">
       <h1 className="text-5xl font-bold">Pokebrute</h1>
@@ -33,15 +38,16 @@ export default function Home() {
           </h2>
 
           <p className="mt-2">
-            Qualité : {pokemon.rarity}
+            Qualité : {pokemon.quality}
           </p>
 
           <p>Niveau : {pokemon.level}</p>
 
           <div className="mt-4">
-            <p>ATK : {pokemon.attack}</p>
-            <p>DEF : {pokemon.defense}</p>
-            <p>SPD : {pokemon.speed}</p>
+            <p>Type : {pokemon.type}</p>
+            <p>ATK : {stats?.attack}</p>
+            <p>DEF : {stats?.defense}</p>
+            <p>SPD : {stats?.speed}</p>
           </div>
         </div>
       )}
