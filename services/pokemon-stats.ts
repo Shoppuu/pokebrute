@@ -35,6 +35,10 @@ function getQualityMultiplier(
   }
 }
 
+function getGrowth(baseStat: number) {
+  return 0.5 + baseStat / 6;
+}
+
 export function getPokemonStats(
   pokemon: Pokemon
 ) {
@@ -56,24 +60,41 @@ export function getPokemonStats(
     pokemon.quality
   );
 
-  const levelBonus = Math.floor(
-    (pokemon.level - 1) * multiplier
-  );
+  const attackGrowth =
+  getGrowth(species.baseAttack);
 
-  return {
-    attack:
-      species.baseAttack +
-      qualityBonus +
-      levelBonus,
+const defenseGrowth =
+  getGrowth(species.baseDefense);
 
-    defense:
-      species.baseDefense +
-      qualityBonus +
-      levelBonus,
+const speedGrowth =
+  getGrowth(species.baseSpeed);
 
-    speed:
-      species.baseSpeed +
-      qualityBonus +
-      levelBonus,
-  };
+return {
+  attack:
+    species.baseAttack +
+    qualityBonus +
+    Math.floor(
+      (pokemon.level - 1) *
+        multiplier *
+        attackGrowth
+    ),
+
+  defense:
+    species.baseDefense +
+    qualityBonus +
+    Math.floor(
+      (pokemon.level - 1) *
+        multiplier *
+        defenseGrowth
+    ),
+
+  speed:
+    species.baseSpeed +
+    qualityBonus +
+    Math.floor(
+      (pokemon.level - 1) *
+        multiplier *
+        speedGrowth
+    ),
+};
 }
