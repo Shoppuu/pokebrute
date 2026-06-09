@@ -6,99 +6,187 @@ import { Pokemon } from "@/types/pokemon";
 
 import { generatePokemon } from "@/services/pokemon-generator";
 import { getPokemonStats } from "@/services/pokemon-stats";
+import { simulateBattle } from "@/services/battle-engine";
+
+import BattleArena from "@/components/battlearena";
 
 export default function Home() {
-  const [pokemon, setPokemon] = useState<Pokemon | null>(
-    null
-  );
+  const [pokemon, setPokemon] =
+    useState<Pokemon | null>(null);
+
+  const [opponent, setOpponent] =
+    useState<Pokemon | null>(null);
+
+  const [playerHp, setPlayerHp] =
+    useState(0);
+
+  const [enemyHp, setEnemyHp] =
+    useState(0);
+
+  const [currentEvent, setCurrentEvent] =
+    useState("");
 
   function getStarterPokemon() {
-    setPokemon(generatePokemon());
+    const starter =
+      generatePokemon();
+
+    const enemy =
+      generatePokemon();
+
+    const starterStats =
+      getPokemonStats(
+        starter
+      );
+
+    const enemyStats =
+      getPokemonStats(
+        enemy
+      );
+
+    setPokemon(starter);
+
+    setOpponent(enemy);
+
+    setPlayerHp(
+      starterStats.defense * 7
+    );
+
+    setEnemyHp(
+      enemyStats.defense * 7
+    );
+
+    setCurrentEvent(
+      "⚔️ Prêt au combat"
+    );
   }
 
-  function setLevel(level: number) {
-    if (!pokemon) return;
+  async function startBattle() {
+    if (
+      !pokemon ||
+      !opponent
+    ) {
+      return;
+    }
 
-    setPokemon({
-      ...pokemon,
-      level,
-    });
+    const result =
+      simulateBattle(
+        pokemon,
+        opponent
+      );
+
+    const playerStats =
+      getPokemonStats(
+        pokemon
+      );
+
+    const enemyStats =
+      getPokemonStats(
+        opponent
+      );
+
+    setPlayerHp(
+      playerStats.defense * 7
+    );
+
+    setEnemyHp(
+      enemyStats.defense * 7
+    );
+
+    for (const event of result.events) {
+      await new Promise(
+        (resolve) =>
+          setTimeout(
+            resolve,
+            1000
+          )
+      );
+
+      if (
+        event.type ===
+        "damage"
+      ) {
+        setCurrentEvent(
+          `${event.attacker} attaque ${event.defender}`
+        );
+
+        if (
+          event.defender ===
+          pokemon.species
+        ) {
+          setPlayerHp(
+            event.remainingHp
+          );
+        } else {
+          setEnemyHp(
+            event.remainingHp
+          );
+        }
+      }
+
+      if (
+        event.type ===
+        "dodge"
+      ) {
+        setCurrentEvent(
+          `💨 ${event.pokemon} esquive`
+        );
+      }
+
+      if (
+        event.type ===
+        "win"
+      ) {
+        setCurrentEvent(
+          `🏆 ${event.pokemon} gagne`
+        );
+      }
+    }
   }
-
-  const stats = pokemon
-    ? getPokemonStats(pokemon)
-    : null;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
+    <main className="flex min-h-screen flex-col items-center gap-8 p-8">
       <h1 className="text-5xl font-bold">
         Pokebrute
       </h1>
 
-      <p className="text-lg text-gray-500">
-        Jeu de combats automatiques inspiré de La Brute
-      </p>
-
       <button
-        onClick={getStarterPokemon}
+        onClick={
+          getStarterPokemon
+        }
         className="rounded bg-red-500 px-6 py-3 text-white hover:bg-red-600"
       >
         Recevoir mon premier Pokémon
       </button>
 
-      {pokemon && (
-        <>
-          <div className="min-w-[300px] rounded-lg border p-6 text-center shadow">
-            <h2 className="text-2xl font-bold">
-              {pokemon.species}
-            </h2>
-
-            <p className="mt-2">
-              Qualité : {pokemon.quality}
-            </p>
-
-            <p>Type : {pokemon.type}</p>
-
-            <p>Niveau : {pokemon.level}</p>
-
-            <div className="mt-4 space-y-1">
-              <p>ATK : {stats?.attack}</p>
-              <p>DEF : {stats?.defense}</p>
-              <p>SPD : {stats?.speed}</p>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setLevel(1)}
-              className="rounded border px-3 py-1"
-            >
-              Niveau 1
-            </button>
+      {pokemon &&
+        opponent && (
+          <>
+            <BattleArena
+              player={pokemon}
+              opponent={
+                opponent
+              }
+              playerHp={
+                playerHp
+              }
+              enemyHp={
+                enemyHp
+              }
+              currentEvent={
+                currentEvent
+              }
+            />
 
             <button
-              onClick={() => setLevel(25)}
-              className="rounded border px-3 py-1"
+              onClick={
+                startBattle
+              }
+              className="rounded bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
             >
-              Niveau 25
+              ⚔️ Combattre
             </button>
-
-            <button
-              onClick={() => setLevel(50)}
-              className="rounded border px-3 py-1"
-            >
-              Niveau 50
-            </button>
-
-            <button
-              onClick={() => setLevel(100)}
-              className="rounded border px-3 py-1"
-            >
-              Niveau 100
-            </button>
-          </div>
-        </>
-      )}
+          </>
+        )}
     </main>
   );
 }
