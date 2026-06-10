@@ -29,34 +29,49 @@ function getTypeMultiplier(
   return 1;
 }
 
-function getDodgeChance(
-  speed: number
+function getRelativeChance(
+  attackerSpeed: number,
+  defenderSpeed: number,
+  min: number,
+  max: number
 ) {
-  return Math.min(
-    0.25,
-    speed / 1000
+  const ratio =
+    defenderSpeed /
+    (attackerSpeed + defenderSpeed);
+
+  return (
+    min +
+    (max - min) * ratio
   );
 }
 
 function calculateDamage(
   attacker: Pokemon,
-  defender: Pokemon
+  defender: Pokemon,
+  critical: boolean
 ) {
   const stats =
     getPokemonStats(
       attacker
     );
 
-  const multiplier =
+  const typeMultiplier =
     getTypeMultiplier(
       attacker,
       defender
     );
 
-  return Math.floor(
+  let damage =
     stats.attack *
-      randomMultiplier() *
-      multiplier
+    randomMultiplier() *
+    typeMultiplier;
+
+  if (critical) {
+    damage *= 2;
+  }
+
+  return Math.floor(
+    damage
   );
 }
 
@@ -74,8 +89,6 @@ export function simulateBattle(
       pokemonB
     );
 
-  // IMPORTANT :
-  // même formule que partout ailleurs
   let hpA =
     statsA.defense * 7;
 
@@ -106,84 +119,168 @@ export function simulateBattle(
     hpA > 0 &&
     hpB > 0
   ) {
+    const attackerStats =
+      getPokemonStats(
+        attacker
+      );
+
     const defenderStats =
       getPokemonStats(
         defender
       );
 
-    if (
-      Math.random() <
-      getDodgeChance(
-        defenderStats.speed
-      )
+    let keepAttacking =
+      true;
+
+    while (
+      keepAttacking &&
+      hpA > 0 &&
+      hpB > 0
     ) {
-      events.push({
-        type: "dodge",
+      // Blocage
 
-        pokemon:
-          defender.species,
-      });
+      if (
+        Math.random() <
+        0.05
+      ) {
+        events.push({
+          type: "block",
 
-      [
-        attacker,
-        defender,
-      ] = [
-        defender,
-        attacker,
-      ];
+          pokemon:
+            defender.species,
+        });
+      }
 
-      continue;
-    }
+      // Esquive
 
-    const damage =
-      calculateDamage(
-        attacker,
-        defender
-      );
+      else {
+        const dodgeChance =
+          getRelativeChance(
+            attackerStats.speed,
+            defenderStats.speed,
+            0.10,
+            0.20
+          );
 
-    if (
-      defender.id ===
-      pokemonA.id
-    ) {
-      hpA -= damage;
+        if (
+          Math.random() <
+          dodgeChance
+        ) {
+          events.push({
+            type: "dodge",
 
-      events.push({
-        type: "damage",
+            pokemon:
+              defender.species,
+          });
+        }
 
-        attacker:
-          attacker.species,
+        // Dégâts
 
-        defender:
-          defender.species,
+        else {
+          const critical =
+            Math.random() <
+            0.05;
 
-        damage,
+          const damage =
+            calculateDamage(
+              attacker,
+              defender,
+              critical
+            );
 
-        remainingHp:
-          Math.max(
-            0,
-            hpA
-          ),
-      });
-    } else {
-      hpB -= damage;
+          if (
+            defender.id ===
+            pokemonA.id
+          ) {
+            hpA -= damage;
 
-      events.push({
-        type: "damage",
+            events.push({
+              type: "damage",
 
-        attacker:
-          attacker.species,
+              attackerId:
+                attacker.id,
 
-        defender:
-          defender.species,
+              attacker:
+                attacker.species,
 
-        damage,
+              defenderId:
+                defender.id,
 
-        remainingHp:
-          Math.max(
-            0,
-            hpB
-          ),
-      });
+              defender:
+                defender.species,
+
+              damage,
+
+              remainingHp:
+                Math.max(
+                  0,
+                  hpA
+                ),
+
+              critical,
+            });
+          } else {
+            hpB -= damage;
+
+            events.push({
+              type: "damage",
+
+              attackerId:
+                attacker.id,
+
+              attacker:
+                attacker.species,
+
+              defenderId:
+                defender.id,
+
+              defender:
+                defender.species,
+
+              damage,
+
+              remainingHp:
+                Math.max(
+                  0,
+                  hpB
+                ),
+
+              critical,
+            });
+          }
+        }
+      }
+
+      if (
+        hpA <= 0 ||
+        hpB <= 0
+      ) {
+        break;
+      }
+
+      const doubleChance =
+        getRelativeChance(
+          defenderStats.speed,
+          attackerStats.speed,
+          0.10,
+          0.20
+        );
+
+      if (
+        Math.random() <
+        doubleChance
+      ) {
+        events.push({
+          type:
+            "doubleAttack",
+
+          pokemon:
+            attacker.species,
+        });
+      } else {
+        keepAttacking =
+          false;
+      }
     }
 
     [

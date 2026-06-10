@@ -26,6 +26,9 @@ export default function Home() {
   const [currentEvent, setCurrentEvent] =
     useState("");
 
+  const [isBattling, setIsBattling] =
+    useState(false);
+
   function getStarterPokemon() {
     const starter =
       generatePokemon();
@@ -63,10 +66,13 @@ export default function Home() {
   async function startBattle() {
     if (
       !pokemon ||
-      !opponent
+      !opponent ||
+      isBattling
     ) {
       return;
     }
+
+    setIsBattling(true);
 
     const result =
       simulateBattle(
@@ -105,13 +111,21 @@ export default function Home() {
         event.type ===
         "damage"
       ) {
-        setCurrentEvent(
-          `${event.attacker} attaque ${event.defender}`
-        );
+        if (
+          event.critical
+        ) {
+          setCurrentEvent(
+            `💥 Critique ! ${event.attacker} attaque ${event.defender}`
+          );
+        } else {
+          setCurrentEvent(
+            `${event.attacker} attaque ${event.defender}`
+          );
+        }
 
         if (
-          event.defender ===
-          pokemon.species
+          event.defenderId ===
+          pokemon.id
         ) {
           setPlayerHp(
             event.remainingHp
@@ -128,7 +142,25 @@ export default function Home() {
         "dodge"
       ) {
         setCurrentEvent(
-          `💨 ${event.pokemon} esquive`
+          `💨 ${event.pokemon} esquive !`
+        );
+      }
+
+      if (
+        event.type ===
+        "block"
+      ) {
+        setCurrentEvent(
+          `🛡 ${event.pokemon} bloque l'attaque !`
+        );
+      }
+
+      if (
+        event.type ===
+        "doubleAttack"
+      ) {
+        setCurrentEvent(
+          `⚡ ${event.pokemon} enchaîne une nouvelle attaque !`
         );
       }
 
@@ -137,10 +169,12 @@ export default function Home() {
         "win"
       ) {
         setCurrentEvent(
-          `🏆 ${event.pokemon} gagne`
+          `🏆 ${event.pokemon} gagne !`
         );
       }
     }
+
+    setIsBattling(false);
   }
 
   return (
@@ -181,7 +215,10 @@ export default function Home() {
               onClick={
                 startBattle
               }
-              className="rounded bg-blue-500 px-6 py-3 text-white hover:bg-blue-600"
+              disabled={
+                isBattling
+              }
+              className="rounded bg-blue-500 px-6 py-3 text-white hover:bg-blue-600 disabled:opacity-50"
             >
               ⚔️ Combattre
             </button>

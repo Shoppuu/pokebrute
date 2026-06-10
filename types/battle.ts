@@ -4,15 +4,30 @@ export type BattleEvent =
   | {
       type: "damage";
 
+      attackerId: string;
       attacker: string;
+
+      defenderId: string;
       defender: string;
 
       damage: number;
 
       remainingHp: number;
+
+      critical: boolean;
     }
   | {
       type: "dodge";
+
+      pokemon: string;
+    }
+  | {
+      type: "block";
+
+      pokemon: string;
+    }
+  | {
+      type: "doubleAttack";
 
       pokemon: string;
     }
