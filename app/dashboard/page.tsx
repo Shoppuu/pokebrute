@@ -1,5 +1,7 @@
 "use client";
 
+import Navbar from "@/components/navbar";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -40,6 +42,8 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen p-10">
+      <Navbar />
+
       <h1 className="mb-10 text-5xl font-bold">
         Tableau de bord
       </h1>
@@ -49,10 +53,6 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold">
             {pokemon.species}
           </h2>
-
-          <p className="mt-2">
-            {pokemon.quality}
-          </p>
 
           <p>
             Type : {pokemon.type}
@@ -94,7 +94,7 @@ export default function Dashboard() {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            Retournez à l’accueil pour obtenir votre premier Pokémon.
+            Retournez à l'accueil pour obtenir votre premier Pokémon.
           </p>
         </div>
       )}
@@ -105,20 +105,6 @@ export default function Dashboard() {
           className="rounded bg-red-500 p-10 text-center text-2xl text-white hover:bg-red-600"
         >
           ⚔️ Combat
-        </Link>
-
-        <Link
-          href="/stable"
-          className="rounded bg-green-500 p-10 text-center text-2xl text-white hover:bg-green-600"
-        >
-          🏠 Écurie
-        </Link>
-
-        <Link
-          href="/eggs"
-          className="rounded bg-purple-500 p-10 text-center text-2xl text-white hover:bg-purple-600"
-        >
-          🥚 Œufs
         </Link>
 
         <Link

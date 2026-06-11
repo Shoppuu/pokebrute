@@ -5,21 +5,17 @@ import HealthBar from "./healthbar";
 
 type Props = {
   pokemon: Pokemon;
-
   hp: number;
-
-  advantage?: boolean;
-  disadvantage?: boolean;
 };
 
 export default function PokemonCard({
   pokemon,
   hp,
-  advantage,
-  disadvantage,
 }: Props) {
   const stats =
-    getPokemonStats(pokemon);
+    getPokemonStats(
+      pokemon
+    );
 
   const maxHp =
     stats.defense * 7;
@@ -30,23 +26,13 @@ export default function PokemonCard({
         {pokemon.species}
       </h2>
 
-      <p>{pokemon.quality}</p>
+      <p>
+        {pokemon.type}
+      </p>
 
-      <p>{pokemon.type}</p>
-
-      <p>Niveau {pokemon.level}</p>
-
-      {advantage && (
-        <p className="mt-2 font-bold text-green-600">
-          ▲ Avantage de type
-        </p>
-      )}
-
-      {disadvantage && (
-        <p className="mt-2 font-bold text-red-600">
-          ▼ Désavantage de type
-        </p>
-      )}
+      <p>
+        Niveau {pokemon.level}
+      </p>
 
       <div className="mt-4">
         <HealthBar
@@ -56,9 +42,17 @@ export default function PokemonCard({
       </div>
 
       <div className="mt-4 text-sm">
-        <p>ATK : {stats.attack}</p>
-        <p>DEF : {stats.defense}</p>
-        <p>SPD : {stats.speed}</p>
+        <p>
+          ATK : {stats.attack}
+        </p>
+
+        <p>
+          DEF : {stats.defense}
+        </p>
+
+        <p>
+          SPD : {stats.speed}
+        </p>
       </div>
     </div>
   );
