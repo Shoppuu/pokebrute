@@ -14,11 +14,12 @@
 
 ## Combat
 
-- [ ] Animation d'attaque
-- [ ] Affichage des dégâts
-- [ ] Affichage du bonus de type
-- [ ] Critiques
-- [ ] Amélioration des esquives
+- [x] Affichage du bonus de type
+- [x] Critiques
+- [x] Amélioration des esquives
+- [x] Blocage et esquive
+- [x] Double frappe
+
 
 ## Progression
 
