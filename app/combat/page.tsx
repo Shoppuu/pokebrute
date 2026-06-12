@@ -7,10 +7,16 @@ import BattleArena from "@/components/battlearena";
 
 import { Pokemon } from "@/types/pokemon";
 
-import { loadPokemon } from "@/services/player-storage";
+import {
+  loadPokemon,
+  savePokemon,
+} from "@/services/player-storage";
+
 import { generatePokemon } from "@/services/pokemon-generator";
 import { getPokemonStats } from "@/services/pokemon-stats";
 import { simulateBattle } from "@/services/battle-engine";
+
+import { gainXp } from "@/services/pokemon-leveling";
 
 export default function Combat() {
   const [player, setPlayer] =
@@ -196,8 +202,42 @@ export default function Combat() {
       }
     }
 
+    const victory =
+      result.winner.id ===
+      player.id;
+
+    const xpEarned =
+      victory
+        ? 20
+        : 10;
+
+    const progression =
+      gainXp(
+        player.level,
+        player.xp,
+        xpEarned
+      );
+
+    const updatedPlayer = {
+      ...player,
+
+      level:
+        progression.level,
+
+      xp:
+        progression.xp,
+    };
+
+    setPlayer(
+      updatedPlayer
+    );
+
+    savePokemon(
+      updatedPlayer
+    );
+
     generateOpponent(
-      player
+      updatedPlayer
     );
   }
 
@@ -223,7 +263,6 @@ export default function Combat() {
 
   return (
     <main className="min-h-screen p-8">
-
       <Navbar />
 
       <h1 className="mb-8 text-5xl font-bold">

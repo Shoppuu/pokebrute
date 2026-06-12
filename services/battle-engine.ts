@@ -5,28 +5,9 @@ import {
 } from "@/types/battle";
 
 import { getPokemonStats } from "./pokemon-stats";
-import { TYPE_ADVANTAGES } from "./type-chart";
 
 function randomMultiplier() {
   return 0.8 + Math.random() * 0.4;
-}
-
-function getTypeMultiplier(
-  attacker: Pokemon,
-  defender: Pokemon
-) {
-  const advantages =
-    TYPE_ADVANTAGES[attacker.type];
-
-  if (
-    advantages.includes(
-      defender.type as never
-    )
-  ) {
-    return 1.3;
-  }
-
-  return 1;
 }
 
 function getRelativeChance(
@@ -47,7 +28,6 @@ function getRelativeChance(
 
 function calculateDamage(
   attacker: Pokemon,
-  defender: Pokemon,
   critical: boolean
 ) {
   const stats =
@@ -55,16 +35,9 @@ function calculateDamage(
       attacker
     );
 
-  const typeMultiplier =
-    getTypeMultiplier(
-      attacker,
-      defender
-    );
-
   let damage =
     stats.attack *
-    randomMultiplier() *
-    typeMultiplier;
+    randomMultiplier();
 
   if (critical) {
     damage *= 2;
@@ -184,7 +157,6 @@ export function simulateBattle(
           const damage =
             calculateDamage(
               attacker,
-              defender,
               critical
             );
 
