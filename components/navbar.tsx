@@ -19,10 +19,6 @@ export default function Navbar() {
       <Link href="/combat">
         ⚔️ Combat
       </Link>
-
-      <Link href="/inventory">
-        📦 Inventaire
-      </Link>
       
     </nav>
   );

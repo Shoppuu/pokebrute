@@ -19,21 +19,25 @@ export type BattleEvent =
   | {
       type: "dodge";
 
+      pokemonId: string;
       pokemon: string;
     }
   | {
       type: "block";
 
+      pokemonId: string;
       pokemon: string;
     }
   | {
       type: "doubleAttack";
 
+      pokemonId: string;
       pokemon: string;
     }
   | {
       type: "win";
 
+      pokemonId: string;
       pokemon: string;
     };
 
@@ -42,4 +46,19 @@ export type BattleResult = {
   loser: Pokemon;
 
   events: BattleEvent[];
+};
+
+export type BattleSummary = {
+  victory: boolean;
+  xpEarned: number;
+  levelsGained: number;
+};
+
+export type BattleSession = {
+  id: string;
+  createdAt: string;
+  player: Pokemon;
+  opponent: Pokemon;
+  events: BattleEvent[];
+  summary: BattleSummary;
 };

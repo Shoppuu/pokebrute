@@ -1,12 +1,17 @@
 import { POKEDEX } from "@/data/pokedex";
 import { Pokemon } from "@/types/pokemon";
+import { getCombatModifiers } from "./progression-rewards";
 
-function getGrowth(
-  baseStat: number
+const BASE_STAT =
+  2;
+
+function getNaturalBonus(
+  level: number
 ) {
   return (
-    0.5 +
-    baseStat / 6
+    Math.floor(
+      level / 5
+    ) * 2
   );
 }
 
@@ -26,44 +31,45 @@ export function getPokemonStats(
     );
   }
 
-  const attackGrowth =
-    getGrowth(
-      species.baseAttack
-    );
-
-  const defenseGrowth =
-    getGrowth(
-      species.baseDefense
-    );
-
-  const speedGrowth =
-    getGrowth(
-      species.baseSpeed
+  const naturalBonus =
+    getNaturalBonus(
+      pokemon.level
     );
 
   return {
     attack:
-      species.baseAttack +
-      Math.floor(
-        (pokemon.level -
-          1) *
-          attackGrowth
-      ),
+      BASE_STAT +
+      naturalBonus +
+      pokemon.statBonuses.attack,
 
     defense:
-      species.baseDefense +
-      Math.floor(
-        (pokemon.level -
-          1) *
-          defenseGrowth
-      ),
+      BASE_STAT +
+      naturalBonus +
+      pokemon.statBonuses.defense,
 
     speed:
-      species.baseSpeed +
-      Math.floor(
-        (pokemon.level -
-          1) *
-          speedGrowth
-      ),
+      BASE_STAT +
+      naturalBonus +
+      pokemon.statBonuses.speed,
   };
+}
+
+export function getPokemonMaxHp(
+  pokemon: Pokemon
+) {
+  const stats =
+    getPokemonStats(
+      pokemon
+    );
+
+  const modifiers =
+    getCombatModifiers(
+      pokemon
+    );
+
+  return Math.floor(
+    stats.defense *
+      7 *
+      modifiers.hpMultiplier
+  );
 }

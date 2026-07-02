@@ -38,7 +38,7 @@ XP
 ↓
 Montée de niveau
 ↓
-Nouveaux talents
+Choix de récompense
 ↓
 Combats plus difficiles
 ↓
@@ -64,13 +64,31 @@ Ces systèmes pourront revenir dans une future version du projet.
 
 ## Progression
 
-Niveau maximum : 30
-
 Objectifs :
 
 * Progression rapide au début
 * Progression plus lente à haut niveau
-* Un Pokémon niveau 30 doit représenter un véritable investissement
+* Les niveaux élevés doivent représenter un véritable investissement
+
+Tous les Pokémon commencent avec les mêmes statistiques :
+
+* ATK : 2
+* DEF : 2
+* SPD : 2
+
+Tous les 5 niveaux, le Pokémon gagne naturellement :
+
+* ATK +2
+* DEF +2
+* SPD +2
+
+À chaque niveau gagné, le joueur reçoit trois propositions :
+
+* 1 amélioration de statistique
+* 1 talent
+* 1 objet
+
+Le joueur choisit une seule récompense. Les deux autres sont perdues.
 
 ---
 
@@ -128,6 +146,23 @@ Exemples :
 * +5% double frappe
 
 Les talents permettent de différencier deux Pokémon de la même espèce.
+
+Certaines espèces ajoutent des talents exclusifs au pool de propositions, sans emplacement réservé.
+
+---
+
+## Objets
+
+Les objets sont des bonus permanents attachés au Pokémon.
+
+Ils ne sont pas consommables et ne créent pas de système d'inventaire séparé.
+
+Exemples :
+
+* Gants de boxe : +10% dégâts
+* Cape légère : +5% esquive
+* Bouclier usé : +5% blocage
+* Bottes rapides : +5% double frappe
 
 ---
 

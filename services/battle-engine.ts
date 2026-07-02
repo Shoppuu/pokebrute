@@ -5,6 +5,19 @@ import {
 } from "@/types/battle";
 
 import { getPokemonStats } from "./pokemon-stats";
+import { getCombatModifiers } from "./progression-rewards";
+
+function clampChance(
+  chance: number
+) {
+  return Math.max(
+    0,
+    Math.min(
+      0.6,
+      chance
+    )
+  );
+}
 
 function randomMultiplier() {
   return 0.8 + Math.random() * 0.4;
@@ -35,16 +48,45 @@ function calculateDamage(
       attacker
     );
 
+  const modifiers =
+    getCombatModifiers(
+      attacker
+    );
+
   let damage =
     stats.attack *
-    randomMultiplier();
+    randomMultiplier() *
+    modifiers.damageMultiplier;
 
   if (critical) {
     damage *= 2;
   }
 
+  return Math.max(
+    1,
+    Math.floor(
+      damage
+    )
+  );
+}
+
+function getMaxHp(
+  pokemon: Pokemon
+) {
+  const stats =
+    getPokemonStats(
+      pokemon
+    );
+
+  const modifiers =
+    getCombatModifiers(
+      pokemon
+    );
+
   return Math.floor(
-    damage
+    stats.defense *
+      7 *
+      modifiers.hpMultiplier
   );
 }
 
@@ -63,10 +105,14 @@ export function simulateBattle(
     );
 
   let hpA =
-    statsA.defense * 7;
+    getMaxHp(
+      pokemonA
+    );
 
   let hpB =
-    statsB.defense * 7;
+    getMaxHp(
+      pokemonB
+    );
 
   const events: BattleEvent[] =
     [];
@@ -97,10 +143,20 @@ export function simulateBattle(
         attacker
       );
 
-    const defenderStats =
-      getPokemonStats(
-        defender
-      );
+      const defenderStats =
+        getPokemonStats(
+          defender
+        );
+
+      const attackerModifiers =
+        getCombatModifiers(
+          attacker
+        );
+
+      const defenderModifiers =
+        getCombatModifiers(
+          defender
+        );
 
     let keepAttacking =
       true;
@@ -114,10 +170,15 @@ export function simulateBattle(
 
       if (
         Math.random() <
-        0.05
+        clampChance(
+          defenderModifiers.blockChance
+        )
       ) {
         events.push({
           type: "block",
+
+          pokemonId:
+            defender.id,
 
           pokemon:
             defender.species,
@@ -128,11 +189,14 @@ export function simulateBattle(
 
       else {
         const dodgeChance =
-          getRelativeChance(
-            attackerStats.speed,
-            defenderStats.speed,
-            0.10,
-            0.20
+          clampChance(
+            getRelativeChance(
+              attackerStats.speed,
+              defenderStats.speed,
+              0.10,
+              0.20
+            ) +
+              defenderModifiers.dodgeBonus
           );
 
         if (
@@ -141,6 +205,9 @@ export function simulateBattle(
         ) {
           events.push({
             type: "dodge",
+
+            pokemonId:
+              defender.id,
 
             pokemon:
               defender.species,
@@ -152,7 +219,9 @@ export function simulateBattle(
         else {
           const critical =
             Math.random() <
-            0.05;
+            clampChance(
+              attackerModifiers.criticalChance
+            );
 
           const damage =
             calculateDamage(
@@ -231,11 +300,14 @@ export function simulateBattle(
       }
 
       const doubleChance =
-        getRelativeChance(
-          defenderStats.speed,
-          attackerStats.speed,
-          0.10,
-          0.20
+        clampChance(
+          getRelativeChance(
+            defenderStats.speed,
+            attackerStats.speed,
+            0.10,
+            0.20
+          ) +
+            attackerModifiers.doubleAttackBonus
         );
 
       if (
@@ -245,6 +317,9 @@ export function simulateBattle(
         events.push({
           type:
             "doubleAttack",
+
+          pokemonId:
+            attacker.id,
 
           pokemon:
             attacker.species,
@@ -276,6 +351,9 @@ export function simulateBattle(
 
   events.push({
     type: "win",
+
+    pokemonId:
+      winner.id,
 
     pokemon:
       winner.species,

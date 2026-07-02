@@ -41,8 +41,9 @@
 
 * XP
 * Montée de niveau
-* Niveau maximum 30
+* Progression sans plafond fixe
 * Barre d'XP dans le dashboard
+* Choix de récompense à chaque niveau
 
 ---
 
@@ -54,21 +55,23 @@
 * Talents offensifs
 * Talents défensifs
 * Talents de vitesse
+* Objets permanents attachés au Pokémon
+* Talents spécifiques aux espèces
 
 ---
 
-## V0.6
+## V0.6 🚧
 
 ### Historique
 
-* Nombre de victoires
-* Nombre de défaites
-* Historique des combats
+* Nombre de victoires ✅
+* Nombre de défaites ✅
+* Historique des combats ✅
 
 ### Profil
 
 * Statistiques du Pokémon
-* Historique du joueur
+* Historique du joueur ✅
 
 ---
 
@@ -90,15 +93,3 @@
 * Boucle de progression complète
 
 ---
-
-## V2.0 (optionnel)
-
-Retour éventuel de fonctionnalités de collection :
-
-* Écurie
-* Œufs
-* Pokédex
-* Collection
-* Pokémon secondaires
-
-Ces systèmes ne font pas partie de la vision actuelle du projet.

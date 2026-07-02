@@ -26,6 +26,8 @@ export default function BattleArena({
         <PokemonCard
           pokemon={player}
           hp={playerHp}
+          label="Toi"
+          accentClassName="border-blue-500"
         />
 
         <div className="mt-20 text-4xl font-bold">
@@ -35,6 +37,8 @@ export default function BattleArena({
         <PokemonCard
           pokemon={opponent}
           hp={enemyHp}
+          label="Adversaire"
+          accentClassName="border-red-500"
         />
 
       </div>
